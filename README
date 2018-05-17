@@ -1,5 +1,6 @@
-# Kinetic-CFPS-Model-Publication-Code
-Repo for the kinetic cell free model code
+Repository for the kinetic cell free model code
+
+From within /src:
 
 data/ stores the raw experimental data in .dat format.
 

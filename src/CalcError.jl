@@ -68,7 +68,7 @@ end
 
 Keys = sortrows([Error Keys],rev=true)[:,2]
 Error = sortrows([Error Keys],rev=true)[:,1]
-Error .*= weight
+#Error .*= weight
 
 return Error,Keys
 end

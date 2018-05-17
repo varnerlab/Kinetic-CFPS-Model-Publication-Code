@@ -45,12 +45,17 @@ function SolveBalances(TSTART,TSTOP,Ts,data_dictionary)
 # ----------------------------------------------------------------------------------- #
 
 # Get required stuff from DataFile struct -
-TSIM = collect(TSTART:Ts:TSTOP);
+#TSIM = collect(TSTART:Ts:TSTOP);
+TSIM = (0.0,3.0)
 initial_condition_vector = data_dictionary["INITIAL_CONDITION_ARRAY"];
 
 # Call the ODE solver - 
-fbalances(t,y,ydot) = MassBalances(t,y,ydot,data_dictionary);
-X = Sundials.cvode(fbalances,initial_condition_vector,TSIM,abstol=1e-9,reltol=1e-9;integrator=:BDF);
+#fbalances(t,y,ydot) = MassBalances(t,y,ydot,data_dictionary);
+fbalances(ydot,y,t) = MassBalances(ydot,y,data_dictionary,t);
+prob = ODEProblem(fbalances,initial_condition_vector,TSIM)
+sol = solve(prob,abstol=1e-9,reltol=1e-9)
+
+#X = Sundials.cvode(fbalances,initial_condition_vector,TSIM,abstol=1e-9,reltol=1e-9;integrator=:BDF);
 
 return (TSIM,X);
 end

@@ -39,6 +39,9 @@ function MassBalances(t,x,dxdt_vector,data_dictionary)
 # data_dictionary  - Data dictionary instance (holds model parameters) 
 # ---------------------------------------------------------------------- #
 
+# Decide whether or not to save flux vectors
+save_fluxes = false
+
 # Set RIBOSOME_START_CAT to RIBOSOME_START_CAT initial condition + RIBOSOME initial condition - RIBOSOME concentration
 initial_condition = readdlm("initial_condition.dat")
 x[76] = min(x[76],initial_condition[76]+initial_condition[77])
@@ -54,18 +57,20 @@ x[idx] = 0.0;
 # Call the control function - 
 (rate_vector) = Control(t,x,rate_vector,data_dictionary);
 
-#if ~isdir("flux")
-#    mkdir("flux")
-#end
+if save_fluxes
+	if ~isdir("Flux")
+		mkdir("Flux")
+	end
 
-#if ~isfile("fluxNC/num_flux")
-#    num_flux = 1
-#else
-#    num_flux = convert(Int64,readdlm("fluxNC/num_flux")[1])+1
-#end
+	if ~isfile("Flux/num_flux")
+		num_flux = 1
+	else
+		num_flux = convert(Int64,readdlm("Flux/num_flux")[1])+1
+	end
 
-#writedlm("fluxNC/$num_flux",[t;rate_vector])
-#writedlm("fluxNC/num_flux",num_flux)
+	writedlm("Flux/$num_flux",[t;rate_vector])
+	writedlm("Flux/num_flux",num_flux)
+end
 
 # Encode the balance equations as a matrix vector product - 
 const S = data_dictionary["STOICHIOMETRIC_MATRIX"];
@@ -74,14 +79,6 @@ const number_of_states = length(tmp_vector);
 for state_index in collect(1:number_of_states)
     dxdt_vector[state_index] = tmp_vector[state_index];
     dxdt_vector[[138;143]] = 0; # Set M_h_c and M_o2_c to steady-state
-end;
-#if ~isfile("rate_vector")
-#writedlm("rate_vector",rate_vector)
-#end
 end
 
-
-
-
-
-
+end

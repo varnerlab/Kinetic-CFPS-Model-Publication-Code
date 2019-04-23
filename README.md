@@ -10,7 +10,7 @@ From within **/src**:
 
 **GroupKO/** stores the results of first-order and pairwise reaction group knockouts. Each directory contains the time vector (`Tsim`), system state (`X`), change in productivity (`prod`) and change in system state (`state`) resulting from the knockout, calculated by `CalcKO.jl`.
 
-**Flux/** stores the reaction flux values as a function of time. Each file contains the timepoint value followed by all flux values. It also contains a file `num_flux` that stores the total number of timepoints. It can be reproduced by running `SolveModel.jl`, with `save_fluxes = true` in MassBalances.jl.
+**Flux/** stores the reaction flux values as a function of time. Each file contains the timepoint value followed by all flux values. It also contains a file `num_flux` that stores the total number of timepoints. It can be reproduced by running `SolveModel.jl`, with `save_fluxes = true` in `MassBalances.jl`.
 
 **Figure 1** is an abridged version of the metabolic network found in `Kinetic-CFPS-Model-Publication-Code/Model.net`.
 

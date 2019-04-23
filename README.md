@@ -14,7 +14,7 @@ From within **/src**:
 
 **Figure 1** is an abridged version of the metabolic network found in `Kinetic-CFPS-Model-Publication-Code/Model.net`.
 
-**Figures 2**, **3**, and **4** present the predictions of the best-fit parameter set and ensemble of parameter sets against experimental data for carbon species, amino acids, and energy species, respectively. **Figure 2 (top)** and **figures 3** and **4** are in the presence of allosteric control; they can be reproduced by running `PlotEnsemble.jl` with `allosteric_control_on = true`. **Figure 2** (bottom) is in the absence of allosteric control; it can be reproduced by running `PlotEnsemble.jl` with `allosteric_control_on = false`.
+**Figures 2**, **3**, and **4** present the predictions of the best-fit parameter set and ensemble of parameter sets against experimental data for carbon species, amino acids, and energy species, respectively. **Figure 2 (top)** and **figures 3** and **4** are in the presence of allosteric control; they can be reproduced by running `PlotEnsemble.jl` with `allosteric_control_on = true`. **Figure 2 (bottom)** is in the absence of allosteric control; it can be reproduced by running `PlotEnsemble.jl` with `allosteric_control_on = false`.
 
 **Figure 6** presents key reaction flux values during the two phases of production, as well as accumulation of PEP and pyruvate, normalized to the glucose uptake rate. The flux array can be read from **Flux/** using `ReadFluxes.jl`.
 

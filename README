@@ -1,10 +1,10 @@
 ##Repository for the kinetic cell free model code
 
-From within /src:
+From within **/src**:
 
-data/ stores the raw experimental data in .dat format.
+**data/** stores the raw experimental data in `.dat` format.
 
-Ensemble/ stores the parameter sets of the ensemble (rate\_constant.dat, saturation\_constant.dat, control\_constant.dat), as well as the time vector (Tsim), system state (X), and cost function value (cost) for each set. It also stores the system state when there is no allosteric control (X\_nc), and the corresponding cost function value (cost\_nc). A similar but not identical ensemble should be created by running Algorithm.jl.
+**Ensemble/** stores the parameter sets of the ensemble (`rate_constant.dat`, `saturation_constant.dat`, `control_constant.dat`), as well as the time vector (`Tsim`), system state (`X`), and cost function value (`cost`) for each set. It also stores the system state when there is no allosteric control (`X_nc`), and the corresponding cost function value (`cost_nc`). A similar but not identical ensemble can be created via guided random sampling by running `Algorithm.jl`.
 
 Rand/ stores the parameter sets of the randomly generated ensemble (rate\_constant.dat, saturation\_constant.dat, control\_constant.dat), as well as the time vector (Tsim), system state (X), and cost function value (cost) for each set. It also stores a breakdown of the cost function by each of the 37 separate experimental measurements, which is used to create Figure 5. A similar (but not identical) ensemble can be created by running Rand1000.jl
 

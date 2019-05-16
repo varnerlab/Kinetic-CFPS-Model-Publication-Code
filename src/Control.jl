@@ -37,9 +37,9 @@ function Control(t,x,rate_vector,data_dictionary)
 # ---------------------------------------------------------------------- #
 
 # Set a default value for the allosteric control variables - 
-const number_of_reactions = length(rate_vector);
+number_of_reactions = length(rate_vector);
 control_vector = ones(number_of_reactions);
-const control_parameter_array = data_dictionary["CONTROL_PARAMETER_ARRAY"];
+control_parameter_array = data_dictionary["CONTROL_PARAMETER_ARRAY"];
 
 # Alias the species vector - 
 M_g6p_c = x[1];

@@ -53,7 +53,7 @@ for i in 1:19
 	# Perform knock-out
 	rate_new = copy(rate)
 	indices = KO_dictionary["$i"]
-	rate_new[indices] = 0
+	rate_new[indices] = zeros(size(rate_new[indices]))
 	data_dictionary["RATE_CONSTANT_ARRAY"] = rate_new
 	# Solve model
 	Tsim,X = SolveBalances(TSTART,TSTOP,Ts,data_dictionary)
@@ -83,8 +83,8 @@ for i in 1:18
 		rate_new = copy(rate)
 		indices1 = KO_dictionary["$i"]
 		indices2 = KO_dictionary["$j"]
-		rate_new[indices1] = 0
-		rate_new[indices2] = 0
+		rate_new[indices1] = zeros(size(rate_new[indices1]))
+		rate_new[indices2] = zeros(size(rate_new[indices2]))
 		data_dictionary["RATE_CONSTANT_ARRAY"] = rate_new
 		# Solve model
 		Tsim,X = SolveBalances(TSTART,TSTOP,Ts,data_dictionary)

@@ -24,7 +24,7 @@ include("Control.jl");
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 # ----------------------------------------------------------------------------------- #
-function MassBalances(t,x,dxdt_vector,data_dictionary)
+function MassBalances(dxdt_vector,x,t,data_dictionary)
 # ---------------------------------------------------------------------- #
 # MassBalances.jl was generated using the Kwatee code generation system.
 # Username: nicholas
@@ -44,18 +44,18 @@ save_fluxes = false
 
 # Set RIBOSOME_START_CAT to RIBOSOME_START_CAT initial condition + RIBOSOME initial condition - RIBOSOME concentration
 initial_condition = readdlm("initial_condition.dat")
-x[76] = min(x[76],initial_condition[76]+initial_condition[77])
-x[77] = min(x[77],initial_condition[76]+initial_condition[77])
+x[76] = min(x[76], initial_condition[76]+initial_condition[77])
+x[77] = min(x[77], initial_condition[76]+initial_condition[77])
 
 # Correct negative x's = throws errors in control even if small - 
-const idx = find(x->(x<0),x);
-x[idx] = 0.0;
+idx = x.<0;
+x[idx] = zeros(size(x[idx]));
 
 # Call the kinetics function - 
-(rate_vector) = Kinetics(t,x,data_dictionary);
+rate_vector = Kinetics(t,x,data_dictionary);
 
 # Call the control function - 
-(rate_vector) = Control(t,x,rate_vector,data_dictionary);
+rate_vector = Control(t,x,rate_vector,data_dictionary);
 
 if save_fluxes
 	if ~isdir("Flux")
@@ -73,9 +73,10 @@ if save_fluxes
 end
 
 # Encode the balance equations as a matrix vector product - 
-const S = data_dictionary["STOICHIOMETRIC_MATRIX"];
-const tmp_vector = S*rate_vector;
-const number_of_states = length(tmp_vector);
+S = data_dictionary["STOICHIOMETRIC_MATRIX"];
+tmp_vector = S*rate_vector;
+number_of_states = length(tmp_vector);
+
 for state_index in collect(1:number_of_states)
     dxdt_vector[state_index] = tmp_vector[state_index];
     dxdt_vector[[138;143]] = 0; # Set M_h_c and M_o2_c to steady-state

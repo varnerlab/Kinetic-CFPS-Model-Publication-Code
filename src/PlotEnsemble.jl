@@ -1,8 +1,9 @@
 include("DataDictionary.jl")
 using PyPlot
+using Statistics
 
 # Decide whether to plot simulations with allosteric control or without
-allosteric_control_on = true
+allosteric_control_on = false
 
 # Setup the timescale
 TSTART = 0.0
@@ -123,9 +124,7 @@ amino_species = permutedims(reshape(species[25:44,1],(4,5)),(2,1))
 # Read all state arrays in the ensemble, and re-pack into a dictionary by species
 Ensemble = Dict()
 num_sets = 100
-i = 0
-while i < num_sets
-    i += 1
+for i in 1:num_sets
     if allosteric_control_on
     	X = readdlm("Ensemble/$i/X")
     else
@@ -159,9 +158,9 @@ else
 end
 
 # Create central carbon figure
-f_Carbon,axarr_Carbon = plt[:subplots](2,4)
-f_Carbon[:set_figheight](3.5)
-f_Carbon[:set_figwidth](10)
+f_Carbon,axarr_Carbon = plt.subplots(2,4)
+f_Carbon.set_figheight(3.5)
+f_Carbon.set_figwidth(10)
 for i in 1:size(carbon_species,1)
 	for j in 1:size(carbon_species,2)
 		species_name = carbon_species[i,j][1]
@@ -171,7 +170,7 @@ for i in 1:size(carbon_species,1)
 		y_label = carbon_species[i,j][5]
 		
 		# Plot errorbars
-		eval(parse("tmp = $species_name"))
+		eval(Meta.parse("tmp = $species_name"))
 		if species_name == "cat" # Convert from mM to μM
 			conversion_factor = 1000
 		else
@@ -179,17 +178,17 @@ for i in 1:size(carbon_species,1)
 		end
 		
 		if i < size(carbon_species,1)
-			axarr_Carbon[i,j][:xaxis][:set_major_formatter](plt[:NullFormatter]())
+			axarr_Carbon[i,j].xaxis.set_major_formatter(plt.NullFormatter())
 		else
-			axarr_Carbon[i,j][:set_xlabel]("Time (h)")
+			axarr_Carbon[i,j].set_xlabel("Time (h)")
 		end
 		
-		axarr_Carbon[i,j][:set_ylabel](y_label)
+		axarr_Carbon[i,j].set_ylabel(y_label)
 		
-		axarr_Carbon[i,j][:errorbar](tmp[:,1],conversion_factor*tmp[:,2],conversion_factor*tmp[:,3],fmt="ro",color="k",linewidth=2,linewidth=2)
-		axarr_Carbon[i,j][:axis]([0,TSTOP,0,y_max])
-		axarr_Carbon[i,j][:set_xticks](collect(0:1:TSTOP))
-		axarr_Carbon[i,j][:set_yticks](collect(0:y_step:y_max))
+		axarr_Carbon[i,j].errorbar(tmp[:,1], conversion_factor*tmp[:,2], conversion_factor*tmp[:,3], fmt="ro", ecolor="k", capsize=2, markerfacecolor="k", markeredgecolor="k", linewidth=2, zorder=2)
+		axarr_Carbon[i,j].axis([0,TSTOP,0,y_max])
+		axarr_Carbon[i,j].set_xticks(collect(0:1:TSTOP))
+		axarr_Carbon[i,j].set_yticks(collect(0:y_step:y_max))
 		
 		# Plot simulations
 		if typeof(species_index) == Int
@@ -213,12 +212,17 @@ for i in 1:size(carbon_species,1)
 		    push!(s,std(sim_CI[k,:]))
 		end
 		# Use different colors for the shaded regions based the presence of allosteric control
-		if allosteric_control_on # Mean +/- 1.96*Std.Dev. = 95% confidence interval
-			axarr_Carbon[i,j][:fill_between](vec(Tsim),m+1.96*s,max(0,m-1.96*s),color="lightblue")
-		else
-			axarr_Carbon[i,j][:fill_between](vec(Tsim),m+1.96*s,max(0,m-1.96*s),color="lightgray")
+		upper_bound_vector = m+1.96*s
+		lower_bound_vector = m-1.96*s
+		for i in 1:length(lower_bound_vector)
+			lower_bound_vector[i] = max(0, lower_bound_vector[i])
 		end
-		axarr_Carbon[i,j][:plot](Tsim,sim_best_fit,"orangered",linewidth=1.5)
+		if allosteric_control_on # Mean +/- 1.96*Std.Dev. = 95% confidence interval
+			axarr_Carbon[i,j].fill_between(vec(Tsim), upper_bound_vector, lower_bound_vector, color="lightblue")
+		else
+			axarr_Carbon[i,j].fill_between(vec(Tsim), upper_bound_vector, lower_bound_vector, color="lightgray")
+		end
+		axarr_Carbon[i,j].plot(Tsim, sim_best_fit, "orangered", linewidth=1.5, zorder=1)
 	end
 end
 tight_layout()
@@ -230,9 +234,9 @@ else
 end
 
 # Create energy species figure
-f_Energy,axarr_Energy = plt[:subplots](4,4)
-f_Energy[:set_figheight](6.5)
-f_Energy[:set_figwidth](10)
+f_Energy,axarr_Energy = plt.subplots(4,4)
+f_Energy.set_figheight(6.5)
+f_Energy.set_figwidth(10)
 for i in 1:size(energy_species,1)
 	for j in 1:size(energy_species,2)
 		species_name = energy_species[i,j][1]
@@ -242,22 +246,22 @@ for i in 1:size(energy_species,1)
 		y_label = energy_species[i,j][5]
 		
 		# Plot errorbars
-		eval(parse("tmp = $species_name"))
-		axarr_Energy[i,j][:errorbar](tmp[:,1],tmp[:,2],tmp[:,3],fmt="ro",color="k",linewidth=2,linewidth=2)
-		axarr_Energy[i,j][:axis]([0,TSTOP,0,y_max])
-		axarr_Energy[i,j][:set_xticks](collect(0:1:TSTOP))
-		axarr_Energy[i,j][:set_yticks](collect(0:y_step:y_max))
+		eval(Meta.parse("tmp = $species_name"))
+		axarr_Energy[i,j].errorbar(tmp[:,1], tmp[:,2], tmp[:,3], fmt="ro", ecolor="k", capsize=2, markerfacecolor="k", markeredgecolor="k", linewidth=2, zorder=2)
+		axarr_Energy[i,j].axis([0,TSTOP,0,y_max])
+		axarr_Energy[i,j].set_xticks(collect(0:1:TSTOP))
+		axarr_Energy[i,j].set_yticks(collect(0:y_step:y_max))
 		
 		if i < size(energy_species,1)
-			axarr_Energy[i,j][:xaxis][:set_major_formatter](plt[:NullFormatter]())
+			axarr_Energy[i,j].xaxis.set_major_formatter(plt.NullFormatter())
 		else
-			axarr_Energy[i,j][:set_xlabel]("Time (h)")
+			axarr_Energy[i,j].set_xlabel("Time (h)")
 		end
 		
 		if j > 1
-			axarr_Energy[i,j][:yaxis][:set_major_formatter](plt[:NullFormatter]())
+			axarr_Energy[i,j].yaxis.set_major_formatter(plt.NullFormatter())
 		end
-		axarr_Energy[i,j][:set_ylabel](y_label)
+		axarr_Energy[i,j].set_ylabel(y_label)
 		
 		# Plot simulations
 		if typeof(species_index) == Int
@@ -281,12 +285,17 @@ for i in 1:size(energy_species,1)
 		    push!(s,std(sim_CI[k,:]))
 		end
 		# Use different colors for the shaded regions based the presence of allosteric control
-		if allosteric_control_on # Mean +/- 1.96*Std.Dev. = 95% confidence interval
-			axarr_Energy[i,j][:fill_between](vec(Tsim),m+1.96*s,max(0,m-1.96*s),color="lightblue")
-		else
-			axarr_Energy[i,j][:fill_between](vec(Tsim),m+1.96*s,max(0,m-1.96*s),color="lightgray")
+		upper_bound_vector = m+1.96*s
+		lower_bound_vector = m-1.96*s
+		for i in 1:length(lower_bound_vector)
+			lower_bound_vector[i] = max(0, lower_bound_vector[i])
 		end
-		axarr_Energy[i,j][:plot](Tsim,sim_best_fit,"orangered",linewidth=1.5)
+		if allosteric_control_on # Mean +/- 1.96*Std.Dev. = 95% confidence interval
+			axarr_Energy[i,j].fill_between(vec(Tsim), upper_bound_vector, lower_bound_vector, color="lightblue")
+		else
+			axarr_Energy[i,j].fill_between(vec(Tsim), upper_bound_vector, lower_bound_vector, color="lightgray")
+		end
+		axarr_Energy[i,j].plot(Tsim, sim_best_fit, "orangered", linewidth=1.5, zorder=1)
 	end
 end
 tight_layout()
@@ -298,9 +307,9 @@ else
 end
 
 # Create amino acids figure
-f_Amino,axarr_Amino = plt[:subplots](5,4)
-f_Amino[:set_figheight](7.9)
-f_Amino[:set_figwidth](10)
+f_Amino,axarr_Amino = plt.subplots(5,4)
+f_Amino.set_figheight(7.9)
+f_Amino.set_figwidth(10)
 for i in 1:size(amino_species,1)
 	for j in 1:size(amino_species,2)
 		species_name = amino_species[i,j][1]
@@ -311,20 +320,20 @@ for i in 1:size(amino_species,1)
 		
 		# Plot errorbars
 		if !(species_name == "arg" || species_name == "glu")
-			eval(parse("tmp = $species_name"))
-			axarr_Amino[i,j][:errorbar](tmp[:,1],tmp[:,2],tmp[:,3],fmt="ro",color="k",linewidth=2,linewidth=2)
+			eval(Meta.parse("tmp = $species_name"))
+			axarr_Amino[i,j].errorbar(tmp[:,1], tmp[:,2], tmp[:,3], fmt="ro", ecolor="k", capsize=2, markerfacecolor="k", markeredgecolor="k", linewidth=2, zorder=2)
 		end
-		axarr_Amino[i,j][:axis]([0,TSTOP,0,y_max])
-		axarr_Amino[i,j][:set_xticks](collect(0:1:TSTOP))
-		axarr_Amino[i,j][:set_yticks](collect(0:y_step:y_max))
+		axarr_Amino[i,j].axis([0,TSTOP,0,y_max])
+		axarr_Amino[i,j].set_xticks(collect(0:1:TSTOP))
+		axarr_Amino[i,j].set_yticks(collect(0:y_step:y_max))
 		
 		if i < size(amino_species,1)
-			axarr_Amino[i,j][:xaxis][:set_major_formatter](plt[:NullFormatter]())
+			axarr_Amino[i,j].xaxis.set_major_formatter(plt.NullFormatter())
 		else
-			axarr_Amino[i,j][:set_xlabel]("Time (h)")
+			axarr_Amino[i,j].set_xlabel("Time (h)")
 		end
 		
-		axarr_Amino[i,j][:set_ylabel](y_label)
+		axarr_Amino[i,j].set_ylabel(y_label)
 		
 		# Plot simulations
 		if typeof(species_index) == Int
@@ -348,12 +357,17 @@ for i in 1:size(amino_species,1)
 		    push!(s,std(sim_CI[k,:]))
 		end
 		# Use different colors for the shaded regions based the presence of allosteric control
-		if allosteric_control_on # Mean +/- 1.96*Std.Dev. = 95% confidence interval
-			axarr_Amino[i,j][:fill_between](vec(Tsim),m+1.96*s,max(0,m-1.96*s),color="lightblue")
-		else
-			axarr_Amino[i,j][:fill_between](vec(Tsim),m+1.96*s,max(0,m-1.96*s),color="lightgray")
+		upper_bound_vector = m+1.96*s
+		lower_bound_vector = m-1.96*s
+		for i in 1:length(lower_bound_vector)
+			lower_bound_vector[i] = max(0, lower_bound_vector[i])
 		end
-		axarr_Amino[i,j][:plot](Tsim,sim_best_fit,"orangered",linewidth=1.5)
+		if allosteric_control_on # Mean +/- 1.96*Std.Dev. = 95% confidence interval
+			axarr_Amino[i,j].fill_between(vec(Tsim), upper_bound_vector, lower_bound_vector, color="lightblue")
+		else
+			axarr_Amino[i,j].fill_between(vec(Tsim), upper_bound_vector, lower_bound_vector, color="lightgray")
+		end
+		axarr_Amino[i,j].plot(Tsim, sim_best_fit, "orangered", linewidth=1.5, zorder=1)
 	end
 end
 tight_layout()

@@ -51,9 +51,9 @@ initial_condition_vector = data_dictionary["INITIAL_CONDITION_ARRAY"];
 
 # Call the ODE solver - 
 #fbalances(t,y,ydot) = MassBalances(t,y,ydot,data_dictionary);
-fbalances(ydot,y,t) = MassBalances(ydot,y,data_dictionary,t);
-prob = ODEProblem(fbalances,initial_condition_vector,TSIM)
-sol = solve(prob,abstol=1e-9,reltol=1e-9)
+#fbalances(ydot,y,t) = MassBalances(t,y,ydot,data_dictionary);
+prob = ODEProblem(MassBalances,initial_condition_vector,TSIM)
+sol = solve(prob,CVODE_BDF(),abstol=1e-9,reltol=1e-9)
 
 #X = Sundials.cvode(fbalances,initial_condition_vector,TSIM,abstol=1e-9,reltol=1e-9;integrator=:BDF);
 

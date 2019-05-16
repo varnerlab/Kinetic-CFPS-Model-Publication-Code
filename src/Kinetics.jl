@@ -393,8 +393,8 @@ E_tRNA_charging_M_tyr_L_c_CAT = x[351];
 E_tRNA_charging_M_val_L_c_CAT = x[352];
 
 # Formulate the kinetic rate vector - 
-rate_constant_array = data_dictionary["RATE_CONSTANT_ARRAY"];
-saturation_constant_array = data_dictionary["SATURATION_CONSTANT_ARRAY"];
+#rate_constant_array = data_dictionary["RATE_CONSTANT_ARRAY"];
+#saturation_constant_array = data_dictionary["SATURATION_CONSTANT_ARRAY"];
 rate_vector = Float64[];
 
 # R_glk_atp: M_atp_c+M_glc_D_c = M_adp_c+M_g6p_c+M_h_c

@@ -1,4 +1,5 @@
 include("ExperimentDataDictionary.jl");
+using DelimitedFiles
 # ----------------------------------------------------------------------------------- #
 # Copyright (c) 2017 Varnerlab
 # School of Chemical Engineering Purdue University
@@ -41,10 +42,11 @@ function DataFile(TSTART,TSTOP,Ts)
 # ----------------------------------------------------------------------------------- #
 
 # Load the stoichiometric matrix - 
-S = float(open(readdlm,pwd()*"/../network/Network.dat"));
-#(NSPECIES,NREACTIONS) = size(S);
-NSPECIES = 148
-NREACTIONS = 204
+dir = pwd()[1:length(pwd())-3]
+S = float(open(readdlm,dir*"/network/Network.dat"));
+dims = size(S);
+NREACTIONS = convert(Int64, dims[2]/2);
+NSPECIES = dims[1]-NREACTIONS;
 
 # Load experimental data file -
 experimental_data_dictionary = ExperimentDataDictionary(TSTART,TSTOP,Ts);
